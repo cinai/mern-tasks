@@ -87,6 +87,9 @@ a {
   display: block;
   background-color: transparent;
 }
+.cerrar-sesion {
+  color: var(--blanco);
+}
 
 @media (min-width: 768px) {
   .contenedor-app {
@@ -136,6 +139,7 @@ aside  {
 .app-header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   background-color: var(--gris2);
   padding: 4rem;
 }
@@ -326,9 +330,6 @@ aside  {
   display: block;
   opacity: .7;
 }
-@ivanmercedes
-ivanmercedes commented on 6 Aug • 
-el css no esta completo falto el estilo de las alerts
 
 .alerta {
   position: fixed;
@@ -356,6 +357,7 @@ el css no esta completo falto el estilo de las alerts
   background-color: rgb(109, 211, 109);
   color: rgb(2, 103, 2);
 }
+
 .alerta-error {
   background-color: rgb(230, 78, 78);
   color: var(--blanco);
