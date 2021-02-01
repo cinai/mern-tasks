@@ -12,7 +12,6 @@ import {
 
 
 export default (state, action) => {
-  console.log(state.tareas)
   switch(action.type) {
     case TAREAS_PROYECTO:
       return {
