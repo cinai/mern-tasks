@@ -1,14 +1,13 @@
 import React, { useReducer } from 'react'
 import TareaContext from './tareaContext'
 import TareaReducer from './tareaReducer'
-import {v4 as uuid} from 'uuid'
+import clienteAxios from '../../config/axios'
 
 import {
   TAREAS_PROYECTO,
   AGREGAR_TAREA,
   VALIDAR_TAREA,
   ELIMINAR_TAREA,
-  ESTADO_TAREA,
   TAREA_ACTUAL,
   ACTUALIZAR_TAREA,
   LIMPIAR_TAREA
@@ -16,17 +15,6 @@ import {
 
 const TareaState = props => {
   const initialState = {
-    tareas: [
-      { id: 9, nombre: 'dormir', estado: true, proyectoId: 1},
-      { id: 1, nombre: 'despertar', estado: false, proyectoId: 2},
-      { id: 2, nombre: 'desayuno', estado: false, proyectoId: 3},
-      { id: 3, nombre: 'limpiar escritorio', estado: true, proyectoId: 4},
-      { id: 4, nombre: 'asda', estado: true, proyectoId: 4},
-      { id: 6, nombre: 'dormqewrir', estado: true, proyectoId: 1},
-      { id: 5, nombre: 'tretre', estado: false, proyectoId: 1},
-      { id: 7, nombre: 'hrhr', estado: false, proyectoId: 2},
-      { id: 8, nombre: 'ee escritorio', estado: true, proyectoId: 3}
-    ],
     tareasProyecto: [],
     errorTarea: false,
     tareaSeleccionada : null
@@ -37,22 +25,32 @@ const TareaState = props => {
   // crear las funciones
 
   // obtener las tareas de un proyecto
-  console.log(state.tareas)
-
-  const obtenerTareas = proyectoId => {
-    dispatch({
-      type: TAREAS_PROYECTO,
-      payload: proyectoId
-    })
+  const obtenerTareas = async proyecto => {
+    try {
+      const resultado = await clienteAxios.get('/api/tareas', {
+        params: { proyecto }
+      })
+      dispatch({
+        type: TAREAS_PROYECTO,
+        payload: resultado.data.tareas
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // agregar una tarea
-  const agregarTarea = tarea => {
-    tarea.id = uuid()
-    dispatch({
-      type: AGREGAR_TAREA,
-      payload: tarea
-    })
+  const agregarTarea = async tarea => {
+    try {
+      const resultado = await clienteAxios.post('/api/tareas', tarea)
+      console.log(resultado)
+      dispatch({
+        type: AGREGAR_TAREA,
+        payload: resultado.data.tarea
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // valida y muestra un error en caso de fallar validacion
@@ -63,32 +61,41 @@ const TareaState = props => {
   }
 
   // eliminar tarea por id
-  const eliminarTarea = id => {
-    dispatch({
-      type: ELIMINAR_TAREA,
-      payload: id
-    })
+  const eliminarTarea = async (id, proyecto) => {
+    try {
+      await clienteAxios.delete(`/api/tareas/${id}`, {
+        params: {
+          proyecto
+        }
+      })
+      dispatch({
+        type: ELIMINAR_TAREA,
+        payload: id
+      })
+      
+    } catch (error) {
+      console.log(error)
+    }
+
   }
 
-  const cambiarEstadoTarea = tarea => {
-    dispatch({
-      type: ESTADO_TAREA,
-      payload: tarea
-    })
+  // editar tarea
+  const actualizarTarea = async tarea => {
+    try {
+      const resultado = await clienteAxios.put(`/api/tareas/${tarea._id}`, tarea)
+      dispatch({
+        type: ACTUALIZAR_TAREA,
+        payload: resultado.data.tarea
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // extrae tarea actual al state
   const guardarTareaActual = tarea => {
     dispatch({
       type: TAREA_ACTUAL,
-      payload: tarea
-    })
-  }
-
-  // editar tarea
-  const actualizarTarea = tarea => {
-    dispatch({
-      type: ACTUALIZAR_TAREA,
       payload: tarea
     })
   }
@@ -103,7 +110,6 @@ const TareaState = props => {
   return (
     <TareaContext.Provider
       value= {{
-        tareas: state.tareas,
         tareasProyecto: state.tareasProyecto,
         errorTarea: state.errorTarea,
         tareaSeleccionada: state.tareaSeleccionada,
@@ -111,7 +117,6 @@ const TareaState = props => {
         agregarTarea,
         validarTarea,
         eliminarTarea,
-        cambiarEstadoTarea,
         guardarTareaActual,
         actualizarTarea,
         limpiarTarea

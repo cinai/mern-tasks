@@ -4,12 +4,12 @@ import tareaContext from '../../context/tareas/tareaContext'
 const Tarea = ({ tarea }) => {
 
   const tareasContext = useContext(tareaContext)
-  const { eliminarTarea, obtenerTareas, cambiarEstadoTarea, guardarTareaActual } = tareasContext
+  const { eliminarTarea, obtenerTareas, actualizarTarea, guardarTareaActual } = tareasContext
   
   // funcion que se ejecuta cuando el usuario presiona boton eliminar
   const handleEliminar = e => {
-    eliminarTarea(tarea.id)
-    obtenerTareas(tarea.proyectoId)
+    eliminarTarea(tarea._id, tarea.proyecto)
+    obtenerTareas(tarea.proyecto)
   }
 
   // funcion que modifica estado de tarea
@@ -19,8 +19,8 @@ const Tarea = ({ tarea }) => {
     } else {
       tarea.estado = true
     }
-    cambiarEstadoTarea(tarea)
-    obtenerTareas(tarea.proyectoId)
+    actualizarTarea(tarea)
+    obtenerTareas(tarea.proyecto)
   }
 
   // guarda tarea en el state
